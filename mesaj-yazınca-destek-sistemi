@@ -1,0 +1,46 @@
+//Main Dosyanız Hangisiyse oraya atılacaktır.
+
+client.on('message', message => {
+        const reason = message.content.split(" ").slice(1).join(" ");
+  if (message.channel.name== 'KANAL ADI') { 
+  if (!message.guild.roles.exists("name", "Destek Ekibi")) return message.author.send(` ${message.guild.name} Adlı Sunucunda, \`Destek Ekibi\` Adlı Bir Rol Olmadığı İçin, Hiçkimse Destek Talebi Açamıyor.`);
+message.delete(1)
+    if (message.guild.channels.exists("name", `destek-${message.author.id}`)) return message.author.send(`Açık Bir Destek Talebin Var.`);
+message.delete(1)
+    message.guild.createChannel(`destek-${message.author.id}`, "text").then(c => {
+message.delete(1)
+          const category = message.guild.channels.find('name', 'TALEPLER')
+message.delete(1)    
+          c.setParent(category.id)
+      let role = message.guild.roles.find("name", "Destek Ekibi");
+      let role2 = message.guild.roles.find("name", "@everyone");
+      c.overwritePermissions(role, {
+          SEND_MESSAGES: true,
+          READ_MESSAGES: true
+      });
+      c.overwritePermissions(role2, {
+          SEND_MESSAGES: false,
+          READ_MESSAGES: false
+      });
+
+      c.overwritePermissions(message.author, {
+          SEND_MESSAGES: true,
+          READ_MESSAGES: true
+      });
+
+      const embed = new Discord.RichEmbed()
+     .setColor('#f19a0f')
+      .setAuthor(`${client.user.username} | Destek Sistemi`)
+      .addField(`Merhaba ${message.author.username}!`, `Destek Yetkilileri burada seninle ilgilenecektir. \nDestek talebini kapatmak için \`${prefix}kapat\` yazabilirsin.`)
+      .addField(`» Talep Konusu/Sebebi:`, `${message.content}`, true)
+      .addField(`» Kullanıcı:`, `<@${message.author.id}>`, true)
+      .setFooter(`${client.user.username} | Destek Sistemi`)
+      .setTimestamp()
+            c.send({
+                embed: embed
+            });
+        }).catch(console.error); 
+    
+    }
+  
+});
